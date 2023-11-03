@@ -22,13 +22,8 @@ public class TripService {
     }
 
     private boolean isFriend(User user, User loggedInUser) {
-        boolean isFriend = false;
-        for (User friend : user.getFriends()) {
-            if (friend.equals(loggedInUser)) {
-                isFriend = true;
-                break;
-            }
-        }
-        return isFriend;
+        return user.getFriends() //
+                .stream()  //
+                .anyMatch(friend -> friend.equals(loggedInUser));
     }
 }
