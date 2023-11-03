@@ -25,14 +25,12 @@ public class TripServiceTest {
     @Test
     @DisplayName("AK 1: You need to be logged in to see the content")
     public void userShouldBeLoggedInToViewTheirTrips() {
-        User user = new User();
+        User loggedInUser = new User();
         Trip trip = new Trip();
-        user.addTrip(trip);
-        UserSession userSession = mock(UserSession.class);
-        tripService.userSession = userSession;
-        when(userSession.getLoggedUser()).thenReturn(user);
+        loggedInUser.addTrip(trip);
+        tripService.userSession = new UserSession(loggedInUser);
 
-        List<Trip> result = tripService.getTripsByUser(user);
+        List<Trip> result = tripService.getTripsByUser(loggedInUser);
 
         assertEquals(singletonList(trip), result);
     }
@@ -47,7 +45,7 @@ public class TripServiceTest {
         loggedInUsersFriend.addFriend(loggedInUser);
         UserSession userSession = mock(UserSession.class);
         tripService.userSession = userSession;
-        when(userSession.getLoggedUser()).thenReturn(loggedInUser);
+        when(userSession.getLoggedInUser()).thenReturn(loggedInUser);
 
         List<Trip> result = tripService.getTripsByUser(loggedInUsersFriend);
 
@@ -58,9 +56,6 @@ public class TripServiceTest {
     @DisplayName("AK 3: If you are not logged in, the code throws an exception")
     public void anonymousUserShouldReceiveAnException() {
         User anonymousUser = new User();
-        UserSession userSession = mock(UserSession.class);
-        when(userSession.getLoggedUser()).thenReturn(null);
-        tripService.userSession = userSession;
 
         assertThrows(UserNotLoggedInException.class, () -> tripService.getTripsByUser(anonymousUser));
     }
