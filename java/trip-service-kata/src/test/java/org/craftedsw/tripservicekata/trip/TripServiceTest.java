@@ -1,13 +1,16 @@
 package org.craftedsw.tripservicekata.trip;
 
-import org.craftedsw.tripservicekata.exception.CollaboratorCallException;
+import org.craftedsw.tripservicekata.exception.UserNotLoggedInException;
 import org.craftedsw.tripservicekata.user.User;
+import org.craftedsw.tripservicekata.user.UserSession;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class TripServiceTest {
@@ -15,10 +18,13 @@ public class TripServiceTest {
     private TripService tripService;
 
     @Test
-    public void userShouldBeLoggedInToSeeTheContent() {
+    public void anonymousUserShouldReceiveAnException() {
         User anonymousUser = new User();
+        UserSession userSession = mock(UserSession.class);
+        when(userSession.getLoggedUser()).thenReturn(null);
+        tripService.userSession = userSession;
 
-        assertThrows(CollaboratorCallException.class, () -> tripService.getTripsByUser(anonymousUser));
+        assertThrows(UserNotLoggedInException.class, () -> tripService.getTripsByUser(anonymousUser));
     }
 
 }
