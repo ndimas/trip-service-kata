@@ -9,6 +9,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
+import static java.util.Collections.emptyList;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -37,5 +41,18 @@ public class TripServiceTest {
         when(userSession.getLoggedUser()).thenReturn(user);
 
         assertThrows(CollaboratorCallException.class, () -> tripService.getTripsByUser(user));
+    }
+    @Test
+    public void userShouldBeFriendsWithAnotherToViewTrip() {
+        User user = new User();
+        User friend = new User();
+        user.addFriend(friend);
+        UserSession userSession = mock(UserSession.class);
+        tripService.userSession = userSession;
+        when(userSession.getLoggedUser()).thenReturn(user);
+
+        List<Trip> result = tripService.getTripsByUser(user);
+
+        assertEquals(emptyList(), result);
     }
 }
