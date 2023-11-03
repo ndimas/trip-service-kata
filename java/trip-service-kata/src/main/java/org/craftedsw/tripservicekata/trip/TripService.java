@@ -22,7 +22,7 @@ public class TripService {
 					break;
 				}
 			}
-			if (isFriend) {
+			if (isFriend || loggedUser.equals(user)) {
 				tripList = TripDAO.findTripsByUser(user);
 			}
 			return tripList;
