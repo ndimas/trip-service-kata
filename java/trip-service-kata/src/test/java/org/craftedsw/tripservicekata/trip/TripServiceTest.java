@@ -14,17 +14,15 @@ import java.util.List;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class TripServiceTest {
+class TripServiceTest {
     @InjectMocks
     private TripService tripService;
 
     @Test
     @DisplayName("AK 1: You need to be logged in to see the content")
-    public void userShouldBeLoggedInToViewTheirTrips() {
+    void userShouldBeLoggedInToViewTheirTrips() {
         User loggedInUser = new User();
         Trip trip = new Trip();
         loggedInUser.addTrip(trip);
@@ -37,15 +35,13 @@ public class TripServiceTest {
 
     @Test
     @DisplayName("AK 2: You need to be a friend to see someone else's trips")
-    public void loggedInUserShouldBeFriendsToViewTrips() {
+    void loggedInUserShouldBeFriendsToViewTrips() {
         User loggedInUser = new User();
         User loggedInUsersFriend = new User();
         Trip friendsTrip = new Trip();
         loggedInUsersFriend.addTrip(friendsTrip);
         loggedInUsersFriend.addFriend(loggedInUser);
-        UserSession userSession = mock(UserSession.class);
-        tripService.userSession = userSession;
-        when(userSession.getLoggedInUser()).thenReturn(loggedInUser);
+        tripService.userSession = new UserSession(loggedInUser);
 
         List<Trip> result = tripService.getTripsByUser(loggedInUsersFriend);
 
@@ -54,7 +50,7 @@ public class TripServiceTest {
 
     @Test
     @DisplayName("AK 3: If you are not logged in, the code throws an exception")
-    public void anonymousUserShouldReceiveAnException() {
+    void anonymousUserShouldReceiveAnException() {
         User anonymousUser = new User();
 
         assertThrows(UserNotLoggedInException.class, () -> tripService.getTripsByUser(anonymousUser));
