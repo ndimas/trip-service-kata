@@ -1,5 +1,6 @@
 package org.craftedsw.tripservicekata.trip;
 
+import org.craftedsw.tripservicekata.exception.CollaboratorCallException;
 import org.craftedsw.tripservicekata.exception.UserNotLoggedInException;
 import org.craftedsw.tripservicekata.user.User;
 import org.craftedsw.tripservicekata.user.UserSession;
@@ -27,4 +28,14 @@ public class TripServiceTest {
         assertThrows(UserNotLoggedInException.class, () -> tripService.getTripsByUser(anonymousUser));
     }
 
+    @Test
+    public void userShouldBeFriendsWithHimselfToViewTrip() {
+        User user = new User();
+        user.addFriend(user);
+        UserSession userSession = mock(UserSession.class);
+        tripService.userSession = userSession;
+        when(userSession.getLoggedUser()).thenReturn(user);
+
+        assertThrows(CollaboratorCallException.class, () -> tripService.getTripsByUser(user));
+    }
 }
