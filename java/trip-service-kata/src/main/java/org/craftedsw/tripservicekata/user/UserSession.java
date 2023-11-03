@@ -12,6 +12,7 @@ public class UserSession {
 
     public UserSession() {
     }
+
     public UserSession(User user) {
         loggedInUser = user;
     }
@@ -22,7 +23,8 @@ public class UserSession {
 
     @NonNull
     public User getLoggedInUser() {
-        return Optional.ofNullable(loggedInUser).orElseThrow(UserNotLoggedInException::new);
+        return Optional.ofNullable(loggedInUser) //
+                .orElseThrow(UserNotLoggedInException::new);
     }
 
 }

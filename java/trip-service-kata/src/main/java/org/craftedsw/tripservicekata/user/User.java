@@ -7,8 +7,8 @@ import java.util.List;
 
 public class User {
 
-	private List<Trip> trips = new ArrayList<>();
-	private List<User> friends = new ArrayList<>();
+	private final List<Trip> trips = new ArrayList<>();
+	private final List<User> friends = new ArrayList<>();
 	
 	public List<User> getFriends() {
 		return friends;
