@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -46,6 +47,20 @@ class TripServiceTest {
         List<Trip> result = tripService.getTripsByUser(loggedInUsersFriend);
 
         assertEquals(singletonList(friendsTrip), result);
+    }
+
+    @Test
+    @DisplayName("A logged in user cannot see other users trips, if they are not friends")
+    void loggedInUserShouldNotViewOtherUsersTrips() {
+        User loggedInUser = new User();
+        User otherUser = new User();
+        Trip otherUserTrip = new Trip();
+        otherUser.addTrip(otherUserTrip);
+        tripService.userSession = new UserSession(loggedInUser);
+
+        List<Trip> result = tripService.getTripsByUser(otherUser);
+
+        assertEquals(emptyList(), result);
     }
 
     @Test
