@@ -9,11 +9,7 @@ public class User {
 
 	private final List<Trip> trips = new ArrayList<>();
 	private final List<User> friends = new ArrayList<>();
-	
-	public List<User> getFriends() {
-		return friends;
-	}
-	
+
 	public void addFriend(User user) {
 		friends.add(user);
 	}
@@ -26,4 +22,9 @@ public class User {
 		return trips;
 	}
 
+	public boolean isFriend(User user) {
+		return friends //
+				.stream()  //
+				.anyMatch(friend -> friend.equals(user));
+	}
 }

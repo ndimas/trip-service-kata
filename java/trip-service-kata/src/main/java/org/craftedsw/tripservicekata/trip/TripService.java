@@ -13,17 +13,11 @@ public class TripService {
 
     public List<Trip> getTripsByUser(User user) throws UserNotLoggedInException {
         User loggedInUser = userSession.getLoggedInUser();
-        boolean isLoggedInUserAFriend = isFriend(user, loggedInUser);
+        boolean isLoggedInUserAFriend = user.isFriend(loggedInUser);
         boolean allowedToViewTrips = isLoggedInUserAFriend || loggedInUser.equals(user);
         if (allowedToViewTrips) {
             return TripDAO.findTripsByUser(user);
         }
         return new ArrayList<>();
-    }
-
-    private boolean isFriend(User user, User loggedInUser) {
-        return user.getFriends() //
-                .stream()  //
-                .anyMatch(friend -> friend.equals(loggedInUser));
     }
 }
