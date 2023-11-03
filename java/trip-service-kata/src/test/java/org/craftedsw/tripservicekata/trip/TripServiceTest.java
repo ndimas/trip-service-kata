@@ -1,9 +1,9 @@
 package org.craftedsw.tripservicekata.trip;
 
-import org.craftedsw.tripservicekata.exception.CollaboratorCallException;
 import org.craftedsw.tripservicekata.exception.UserNotLoggedInException;
 import org.craftedsw.tripservicekata.user.User;
 import org.craftedsw.tripservicekata.user.UserSession;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,7 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static java.util.Collections.*;
+import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
@@ -23,6 +23,7 @@ public class TripServiceTest {
     private TripService tripService;
 
     @Test
+    @DisplayName("AK 1: You need to be logged in to see the content")
     public void userShouldBeLoggedInToViewTheirTrips() {
         User user = new User();
         Trip trip = new Trip();
@@ -37,6 +38,7 @@ public class TripServiceTest {
     }
 
     @Test
+    @DisplayName("AK 3: If you are not logged in, the code throws an exception")
     public void anonymousUserShouldReceiveAnException() {
         User anonymousUser = new User();
         UserSession userSession = mock(UserSession.class);
@@ -47,27 +49,19 @@ public class TripServiceTest {
     }
 
     @Test
-    public void userShouldBeFriendsWithHimselfToViewTrip() {
-        User user = new User();
-        user.addFriend(user);
+    @DisplayName("AK 2: You need to be a friend to see someone else's trips")
+    public void loggedInUserShouldBeFriendsToViewTrips() {
+        User loggedInUser = new User();
+        User loggedInUsersFriend = new User();
+        Trip friendsTrip = new Trip();
+        loggedInUsersFriend.addTrip(friendsTrip);
+        loggedInUsersFriend.addFriend(loggedInUser);
         UserSession userSession = mock(UserSession.class);
         tripService.userSession = userSession;
-        when(userSession.getLoggedUser()).thenReturn(user);
+        when(userSession.getLoggedUser()).thenReturn(loggedInUser);
 
-        assertThrows(CollaboratorCallException.class, () -> tripService.getTripsByUser(user));
-    }
+        List<Trip> result = tripService.getTripsByUser(loggedInUsersFriend);
 
-    @Test
-    public void userShouldBeFriendsWithAnotherToViewTrip() {
-        User user = new User();
-        User friend = new User();
-        user.addFriend(friend);
-        UserSession userSession = mock(UserSession.class);
-        tripService.userSession = userSession;
-        when(userSession.getLoggedUser()).thenReturn(user);
-
-        List<Trip> result = tripService.getTripsByUser(user);
-
-        assertEquals(emptyList(), result);
+        assertEquals(singletonList(friendsTrip), result);
     }
 }
